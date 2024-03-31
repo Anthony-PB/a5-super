@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -56,30 +57,40 @@ public class SelectorApp implements PropertyChangeListener {
 
         // Add status bar
         statusLabel = new JLabel();
-        // TODO 1A: Add `statusLabel` to the bottom of our window.  Stylistic alteration of the
+        frame.add(statusLabel, BorderLayout.PAGE_END);
+        //  Add `statusLabel` to the bottom of our window.  Stylistic alteration of the
         //  label (i.e., custom fonts and colors) is allowed.
         //  See the BorderLayout tutorial [1] for example code that you can adapt.
         //  [1]: https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html
 
         // Add image component with scrollbars
         imgPanel = new ImagePanel();
-        // TODO 1B: Replace the following line with code to put scroll bars around `imgPanel` while
+        //  Replace the following line with code to put scroll bars around `imgPanel` while
         //  otherwise keeping it in the center of our window.  The scroll pane should also be given
         //  a moderately large preferred size (e.g., between 400 and 700 pixels wide and tall).
         //  The Swing Tutorial has lots of info on scrolling [1], but for this task you only need
         //  the basics from lecture.
         //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/scrollpane.html
-        frame.add(imgPanel);  // Replace this line
-
-
+        JScrollPane scrollPane = new JScrollPane(imgPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        Dimension scrollPanePreferredSize = new Dimension(600, 400);
+        scrollPane.setPreferredSize(scrollPanePreferredSize);
+        //JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+        //JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+        //Dimension preferredSize = new Dimension(20, 40);
+        //horizontalScrollBar.setPreferredSize(preferredSize);
+        //verticalScrollBar.setPreferredSize(preferredSize);
+        frame.add(scrollPane);
         // Add menu bar
         frame.setJMenuBar(makeMenuBar());
 
         // Add control buttons
         // TODO 3E: Call `makeControlPanel()`, then add the result to the window next to the image.
-
+        //frame.add(makeControlPanel(), BorderLayout.LINE_END);
         // Controller: Set initial selection tool and update components to reflect its state
         setSelectionModel(new PointToPointSelectionModel(true));
+        frame.pack(); // Pack components for layout
+        frame.setVisible(true); // Make the frame visible
     }
 
     /**
@@ -226,8 +237,34 @@ public class SelectorApp implements PropertyChangeListener {
         // Filter for file extensions supported by Java's ImageIO readers
         chooser.setFileFilter(new FileNameExtensionFilter("Image files",
                 ImageIO.getReaderFileSuffixes()));
-
-        // TODO 1C: Complete this method as specified by performing the following tasks:
+        int returnVal = 0;
+        boolean issueAFO = false;
+        while(!issueAFO) {
+            returnVal = chooser.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) { // == 0
+                try {
+                    File selectedFile = chooser.getSelectedFile();
+                    BufferedImage img = ImageIO.read(selectedFile);
+                    if (img != null) {
+                        this.setImage(img);
+                        issueAFO = true; // allow the chooser to close
+                    } else {
+                        throw new IOException("Failed to read image.");
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null,
+                            "Error opening image: " + e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }else{
+                break;
+            }
+        }
+        if (!issueAFO && returnVal != JFileChooser.CANCEL_OPTION) {
+            openImage(); // Recursive call to show the dialog again
+        }
+        //  Complete this method as specified by performing the following tasks:
         //  * Show an "open file" dialog using the above chooser [1].
         //  * If the user selects a file, read it into a BufferedImage [2], then set that as the
         //    current image (by calling `this.setImage()`).
@@ -236,9 +273,9 @@ public class SelectorApp implements PropertyChangeListener {
         //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
         //  [2] https://docs.oracle.com/javase/tutorial/2d/images/loadimage.html
         //  [3] https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
-        // TODO (embellishment): After a problem, re-show the open dialog.  By reusing the same
+        //  (embellishment): After a problem, re-show the open dialog.  By reusing the same
         //  chooser, the dialog will show the same directory as before the problem. (1 point)
-        throw new UnsupportedOperationException();  // Replace this line
+
     }
 
     /**
