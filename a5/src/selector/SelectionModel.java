@@ -106,7 +106,7 @@ public abstract class SelectionModel {
         state = copy.state;
         // If the copy is currently processing, assume the previous state was SELECTING
         //  (FIXME: this assumption is invalid if it was processing a move).
-        if (state == PROCESSING) {
+        if (state == PROCESSING && copy.getProcessingProgress() == null) {
             state = SELECTING;
         }
         start = copy.start;
@@ -183,12 +183,13 @@ public abstract class SelectionModel {
             throw new IllegalStateException(
                     "Cannot query last point when not selection has been started");
         }
-        // TODO 2A: If there are no segments currently in the selection path, return the starting
-        //  point.  Otherwise, return the endpoint of the last segment of the current selection
-        //  path.
+        if (selection.isEmpty() || state == SELECTED) {
+            return start;
+        }
+        PolyLine poly = selection.getLast();
+        return poly.end();
         //  Test immediately with `testStart()` (also covered by `testAppend()` after
         //  implementing `appendToSelection()`).
-        throw new UnsupportedOperationException();  // Replace this line
     }
 
     /**
@@ -335,7 +336,11 @@ public abstract class SelectionModel {
             //  by the `selection()` observer to minimize rep exposure).
             //  Test immediately with `testUndoSelected()`, and add additional tests per the
             //  corresponding task in the test suite (consider writing the tests first).
-            throw new UnsupportedOperationException();  // Replace this line
+            selection.removeLast();
+            if(state == SELECTED){
+                setState(SelectionState.SELECTING);
+                propSupport.firePropertyChange("selection", null, selection());
+            }
         }
     }
 

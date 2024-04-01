@@ -21,11 +21,9 @@ public class PointToPointSelectionModel extends SelectionModel {
      */
     @Override
     public PolyLine liveWire(Point p) {
-        // TODO 2B: Implement this method as specified by constructing and returning a new PolyLine
-        //  representing the desired line segment.  This can be done with one statement.
         //  Test immediately with `testLiveWireEmpty()`, and think about how the test might change
         //  for non-empty selections (see task 2D).
-        throw new UnsupportedOperationException();  // Replace this line
+        return new PolyLine(lastPoint(),p);
     }
 
     /**
@@ -33,12 +31,7 @@ public class PointToPointSelectionModel extends SelectionModel {
      */
     @Override
     protected void appendToSelection(Point p) {
-        // TODO 2C: Create a line segment from the end of the previous segment (or from the starting
-        //  point if this is only the 2nd point) to the current point `p`, then append that segment
-        //  to the current selection path.  This can be done with one statement, similar to
-        //  `liveWire()` above.
-        //  Test immediately with `testAppend()` and `testFinishSelection()`.
-        throw new UnsupportedOperationException();  // Replace this line
+        selection.add(new PolyLine(lastPoint(), p));
     }
 
     /**

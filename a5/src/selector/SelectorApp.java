@@ -254,7 +254,7 @@ public class SelectorApp implements PropertyChangeListener {
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null,
                             "Error opening image: " + e.getMessage(),
-                            "Error",
+                            "Unsupported Image Format",
                             JOptionPane.ERROR_MESSAGE);
                 }
             }else{
