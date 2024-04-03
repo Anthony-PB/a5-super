@@ -85,8 +85,7 @@ public class SelectorApp implements PropertyChangeListener {
         frame.setJMenuBar(makeMenuBar());
 
         // Add control buttons
-        // TODO 3E: Call `makeControlPanel()`, then add the result to the window next to the image.
-        //frame.add(makeControlPanel(), BorderLayout.LINE_END);
+        frame.add(makeControlPanel(), BorderLayout.LINE_END);
         // Controller: Set initial selection tool and update components to reflect its state
         setSelectionModel(new PointToPointSelectionModel(true));
         frame.pack(); // Pack components for layout
@@ -118,8 +117,12 @@ public class SelectorApp implements PropertyChangeListener {
         undoItem = new JMenuItem("Undo");
         editMenu.add(undoItem);
 
-        // TODO (embellishment): Assign keyboard shortcuts to menu items [1].  (1 point)
-        //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/menu.html#mnemonic
+        // Assign accelerators to menu items
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
+        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK));
 
         // Controller: Attach menu item listeners
         openItem.addActionListener(e -> openImage());
@@ -149,7 +152,22 @@ public class SelectorApp implements PropertyChangeListener {
         //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/panel.html
         //  [2] https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
         //  [3] https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html
-        throw new UnsupportedOperationException();  // Replace this line
+        JPanel jPan = new JPanel(new GridLayout(0,2));
+        cancelButton = new JButton("Cancel");
+        undoButton = new JButton("Undo");
+        resetButton = new JButton("Reset");
+        finishButton = new JButton("Finish");
+        jPan.add(cancelButton);
+        jPan.add(undoButton);
+        jPan.add(resetButton);
+        jPan.add(finishButton);
+
+        //Listeners
+        cancelButton.addActionListener(e -> model.cancelProcessing());
+        undoButton.addActionListener(e -> model.undo());
+        resetButton.addActionListener(e -> model.reset());
+        finishButton.addActionListener(e -> model.finishSelection());
+        return jPan;
     }
 
     /**
@@ -180,7 +198,30 @@ public class SelectorApp implements PropertyChangeListener {
     private void reflectSelectionState(SelectionState state) {
         // Update status bar to show current state
         statusLabel.setText(state.toString());
-
+        // Disable buttons and menu items by default
+        cancelButton.setEnabled(false);
+        finishButton.setEnabled(false);
+        saveItem.setEnabled(false);
+        undoButton.setEnabled(false);
+        resetButton.setEnabled(false);
+        //Could have done an if else statement tree. Or something with ?. Wanted to try this.
+        // Enable components based on the selection state
+        switch (state) {
+            case PROCESSING:
+                cancelButton.setEnabled(true);
+                break;
+            case SELECTING:
+                finishButton.setEnabled(true);
+                break;
+            case SELECTED:
+                saveItem.setEnabled(true);
+                undoButton.setEnabled(true);
+                resetButton.setEnabled(true);
+                break;
+            case NO_SELECTION:
+                // Nothing to enable for NO_SELECTION state
+                break;
+        }
         // TODO 3F: Enable/disable components (both buttons and menu items) as follows:
         //  * Cancel is only allowed when the selection is processing
         //  * Undo and Reset are not allowed when there is no selection (pending or complete)
@@ -302,7 +343,51 @@ public class SelectorApp implements PropertyChangeListener {
         //  * After an IOException, or after user selects "No" (instead of "Cancel") when prompted,
         //    re-show the save dialog.  By reusing the same chooser, the dialog will show the same
         //    directory as before the problem. (1 point)
-        throw new UnsupportedOperationException();  // Replace this line
+        int returnVal = chooser.showSaveDialog(frame); // Use showSaveDialog for saving a file
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            if (!file.getName().toLowerCase().endsWith(".png")) {
+                // Append .png extension if not already present
+                // Embellishment (1)
+                file = new File(file.getAbsolutePath() + ".png");
+            }
+
+            if (file.exists()) {
+                // Prompt before overwriting existing file
+                // Embellishment (2)
+                int overwriteOption = JOptionPane.showConfirmDialog(frame,
+                        "File already exists. Do you want to overwrite it?",
+                        "Overwrite File", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (overwriteOption != JOptionPane.YES_OPTION) {
+                    // (3)
+                    saveSelection();
+                    return; // User chose not to overwrite or canceled
+                }
+            }
+            // This is to select the correct pixel via the completed selection in the model
+            Polygon clip = PolyLine.makePolygon(model.selection);
+            Rectangle bounds = clip.getBounds();
+            clip.translate(-bounds.x, -bounds.y);
+            BufferedImage dst = new BufferedImage(bounds.width, bounds.height,
+                    BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = dst.createGraphics();
+            g.setClip(clip);
+            g.drawImage(model.img, -bounds.x, -bounds.y, null);
+            g.dispose(); // Dispose graphics resources
+
+            try {
+                ImageIO.write(dst, "png", file);
+                JOptionPane.showMessageDialog(frame,
+                        "Image saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(frame,
+                        "Error saving file: " + e.getClass().getSimpleName() + ": " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                // (3)
+                saveSelection();
+            }
+        }
     }
 
     /**
