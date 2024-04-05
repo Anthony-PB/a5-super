@@ -177,7 +177,7 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
     private void paintSelectionPerimeter(Graphics g, List<PolyLine> segments) {
         g.setColor(selectionPerimeterColor);
         for(PolyLine p : segments) {
-            g.drawPolyline(p.xs(),p.ys(),2);
+            g.drawPolyline(p.xs(),p.ys(),p.size());
         }
         // TODO 3B: Implement this method as specified.
         //  The Graphics API documentation [1] is essential to finding appropriate methods to draw
@@ -192,7 +192,7 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
     private void paintLiveWire(Graphics g) {
         g.setColor(liveWireColor);
         PolyLine p = model.liveWire(mouseLocation);
-        g.drawPolyline(p.xs(),p.ys(),2);
+        g.drawPolyline(p.xs(),p.ys(),p.size());
         // TODO 3C: Implement this method as specified.  The same Graphics methods you used in
         //  `paintSelectionPerimeter()` are relevant here.
     }
@@ -203,8 +203,18 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
      * control point radius.
      */
     private void paintControlPoints(Graphics g, List<PolyLine> segments) {
-        // TODO 4A: Implement this method as specified.  Pay careful attention to the arguments
-        //  expected by your chosen Graphics API call.
+        g.setColor(controlPointColor);
+
+        for (PolyLine p : segments) {
+            int[] xs = p.xs();
+            int[] ys = p.ys();
+
+            int centerX = (xs[0] + xs[1]) / 2;
+            int centerY = (ys[0] + ys[1]) / 2;
+
+            g.fillOval(centerX - controlPointRadius, centerY - controlPointRadius,
+                    2 * controlPointRadius, 2 * controlPointRadius);
+        }
     }
 
     /**
@@ -232,15 +242,16 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
     public void mouseClicked(MouseEvent e) {
         updateMouseLocation(e.getPoint());
 
-        if(e.getButton() == MouseEvent.BUTTON1 && model.state() == SELECTING ||
-                model.state() == NO_SELECTION){
+        if(e.getButton() == MouseEvent.BUTTON1 && (model.state() == SELECTING ||
+                model.state() == NO_SELECTION)){
             model.addPoint(mouseLocation);
         }
         if(e.getButton() == MouseEvent.BUTTON2 && model.state() == SELECTING){
             model.setState(SELECTED);
         }
-        if(e.getButton() == MouseEvent.BUTTON3 && model.state() == SELECTING ||
-                model.state() == SELECTED){
+        if(e.getButton() == MouseEvent.BUTTON3 && (model.state() == SELECTING ||
+                model.state() == SELECTED)){
+
             model.undo();
         }
 

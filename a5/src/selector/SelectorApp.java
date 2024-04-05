@@ -212,11 +212,13 @@ public class SelectorApp implements PropertyChangeListener {
                 break;
             case SELECTING:
                 finishButton.setEnabled(true);
-                break;
-            case SELECTED:
-                saveItem.setEnabled(true);
                 undoButton.setEnabled(true);
                 resetButton.setEnabled(true);
+                break;
+            case SELECTED:
+                undoButton.setEnabled(true);
+                resetButton.setEnabled(true);
+                saveItem.setEnabled(true);
                 break;
             case NO_SELECTION:
                 // Nothing to enable for NO_SELECTION state

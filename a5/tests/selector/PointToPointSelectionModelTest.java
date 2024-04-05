@@ -285,7 +285,22 @@ class PointToPointSelectionModelTest {
 
     // TODO 4C: Write at least one additional test case for `movePoint()` that moves the starting
     //  point of the selection.
+    @DisplayName("GIVEN a selection, WHEN a point is at the start of the selection path is moved, "
+            + "THEN the two segments joined at that point will have their start or end moved to "
+            + "the new location as appropriate.")
+    @Test
+    void testMovePointStart() {
+        SelectionModel model = makeSquareSelection();
+        PclTester observer = new PclTester();
+        model.addPropertyChangeListener(observer);
 
+        model.movePoint(0, new Point(11, 12));
+        observer.assertChanged("selection");
+        PolyLine beforeSegment = model.selection().getLast();
+        PolyLine afterSegment = model.selection().getFirst();
+        assertEquals(new Point(11, 12), beforeSegment.end());
+        assertEquals(new Point(11, 12), afterSegment.start());
+    }
     /* Tests of closestPoint() */
 
     @DisplayName("GIVEN a selection (with no duplicate control points), WHEN querying for the "
