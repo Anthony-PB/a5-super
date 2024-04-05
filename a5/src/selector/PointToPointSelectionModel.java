@@ -110,17 +110,6 @@ public class PointToPointSelectionModel extends SelectionModel {
 
             track++;
         }
-        // TODO 4B: Complete the implementation of this method as specified using a `ListIterator`.
-        //  You will need to replace two segments of the selection with different PolyLines, and
-        //  this replacement can be done efficiently while iterating by using `ListIterator`'s
-        //  `set()` method.  Think carefully about how to "wrap around" if `index` corresponds to
-        //  the starting point of the selection.
-        //  Reminder: If the moved point corresponds to the starting point for the selection, then
-        //  you will also need to update the `start` field appropriately while avoiding rep exposure
-        //  (remember that `Point` is a mutable class, so you will want to _copy_ client-provided
-        //  Points rather than aliasing them).
-        //  Finally, notify listeners that the "selection" property has changed (see parent class
-        //  for examples).
     }
 
 }
