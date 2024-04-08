@@ -220,7 +220,50 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
      * [0..segments.size()).
      */
     private void paintMoveGuides(Graphics g, List<PolyLine> segments) {
-        // TODO 4G: Implement this method as specified.
+        System.out.println(selectedIndex);
+        if (selectedIndex < 0 || selectedIndex >= segments.size()) {
+            // Handle out-of-bounds selectedIndex, such as throwing an exception or returning early
+            return;
+        }
+        g.setColor(Color.RED);
+
+        int[] xs1;
+        int[] ys1;
+        int[] xs2;
+        int[] ys2;
+
+        if (selectedIndex == 0) {
+            xs1 = segments.get(segments.size() - 1).xs();
+            ys1 = segments.get(segments.size() - 1).ys();
+            xs2 = segments.get(selectedIndex).xs();
+            ys2 = segments.get(selectedIndex).ys();
+        } else if (selectedIndex == segments.size() - 1) {
+            xs1 = segments.get(selectedIndex - 1).xs();
+            ys1 = segments.get(selectedIndex - 1).ys();
+            xs2 = segments.get(selectedIndex).xs();
+            ys2 = segments.get(selectedIndex).ys();
+        } else {
+            xs1 = segments.get(selectedIndex - 1).xs();
+            ys1 = segments.get(selectedIndex - 1).ys();
+            xs2 = segments.get(selectedIndex).xs();
+            ys2 = segments.get(selectedIndex).ys();
+        }
+
+        int centerX1 = (xs1[0] + xs1[1]) / 2;
+        int centerY1 = (ys1[0] + ys1[1]) / 2;
+        int centerX2 = (xs2[0] + xs2[1]) / 2;
+        int centerY2 = (ys2[0] + ys2[1]) / 2;
+
+        int[] x1 = new int[2];
+        int[] y1 = new int[2];
+        x1[1] = mouseLocation.x;
+        y1[1] = mouseLocation.y;
+        x1[0] = centerX1;
+        y1[0] = centerY1;
+        g.drawPolyline(x1, y1, 2);
+        x1[0] = centerX2;
+        y1[0] = centerY2;
+        g.drawPolyline(x1, y1, 2);
     }
 
     /* Event listeners */
