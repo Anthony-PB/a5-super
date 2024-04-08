@@ -10,6 +10,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -251,12 +252,29 @@ public abstract class SelectionModel {
      */
     public int closestPoint(Point p, int maxDistanceSq) {
         assert state == SELECTED;
+        int closestIndex = -1;
+        //Something to initially compare and then store the closest point
+        int closestDistanceSq = Integer.MAX_VALUE;
+        for (int i = 0; i < selection.size(); i++) {
+            PolyLine poly = selection.get(i);
+            Point compareP = poly.start();
+            int dx = compareP.x - p.x;
+            int dy = compareP.y - p.y;
+            //This is allowed because maxDistance is squared
+            int distanceSq = (dx * dx) + (dy * dy);
+            System.out.println(distanceSq);
+            //If it is in bounds and smaller than our current distance. swap values of variables
+            if (distanceSq <= maxDistanceSq && distanceSq < closestDistanceSq) {
+                closestIndex = i;
+                closestDistanceSq = distanceSq;
+            }
+        }
         // TODO 3H: Implement as specified.  Note that the argument is the _square_ of the maximum
         //  distance; you can take advantage of this to avoid doing any floating-point math.
         //  Test immediately with the provided `testClosestPoint*()` cases, and add additional tests
         //  per the corresponding task in the test suite (consider writing the tests first).
         //  Note that, by this indexing convention, the index of `start` is 0.
-        throw new UnsupportedOperationException();  // Replace this line
+        return closestIndex;
     }
 
     /**

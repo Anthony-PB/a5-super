@@ -56,60 +56,24 @@ public class PointToPointSelectionModel extends SelectionModel {
 
         // Get a list iterator to traverse the selection segments
         ListIterator<PolyLine> listIterator = selection.listIterator();
-        // Handle wrapping around if the starting point of the selection is moved
-        if (index == 0) {
-            PolyLine firstSegment = listIterator.next(); // Move to the first segment
-            p1 = firstSegment.start();
-            p2 = firstSegment.end();
-
-            // Replace the first segment
-            PolyLine updatedFirstSegment = new PolyLine(newPoint, p2);
-            listIterator.set(updatedFirstSegment);
-
-            // Move to the last segment
-            while (listIterator.hasNext()) {
-                listIterator.next();
-            }
-            // Access the last segment using previous()
-            PolyLine lastSegment = listIterator.previous();
-            p1 = lastSegment.start();
-
-            // Update the start of the last segment
-            PolyLine updatedLastSegment = new PolyLine(p1, newPoint);
-            listIterator.set(updatedLastSegment);
-
-            propSupport.firePropertyChange("selection", null, selection());
-            return;
-        }
-
-        // Track the current segment index
         int track = 0;
-
-        while (listIterator.hasNext()) {
-            PolyLine segment = listIterator.next();
-            if (track == index) {
-                // Update the end of the previous segment
-                if (listIterator.hasPrevious()) {
-                    PolyLine previousSegment = listIterator.previous();
-                    listIterator.previous();
-                    p1 = previousSegment.start();
-                    PolyLine updatedPreviousSegment = new PolyLine(p1, newPoint);
-                    listIterator.set(updatedPreviousSegment);
-                    listIterator.next(); // Move back to the current segment
-                    listIterator.next();
-                }
-
-                // Update the start of the current segment
-                p2 = segment.end();
-                PolyLine updatedCurrentSegment = new PolyLine(newPoint, p2);
-                listIterator.set(updatedCurrentSegment);
-
-                propSupport.firePropertyChange("selection", null, selection());
-                return;
+        // while loop
+        if (index == 0) {
+            start = newPoint;
+        }
+        while(listIterator.hasNext()){
+            PolyLine poly = listIterator.next();
+            if(track == index) {
+                p1 = poly.end();
+                listIterator.set(new PolyLine(newPos, p1));
             }
-
+            // Prevents use of previous() and handle wrapping if needed
+            if(track+1 == index || (index == 0 && !(listIterator.hasNext()))){
+                p2 = poly.start();
+                listIterator.set(new PolyLine(p2, newPos));
+            }
             track++;
         }
+        propSupport.firePropertyChange("selection", null, selection());
     }
-
 }

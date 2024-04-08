@@ -193,8 +193,6 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
         g.setColor(liveWireColor);
         PolyLine p = model.liveWire(mouseLocation);
         g.drawPolyline(p.xs(),p.ys(),p.size());
-        // TODO 3C: Implement this method as specified.  The same Graphics methods you used in
-        //  `paintSelectionPerimeter()` are relevant here.
     }
 
     /**
@@ -204,7 +202,6 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
      */
     private void paintControlPoints(Graphics g, List<PolyLine> segments) {
         g.setColor(controlPointColor);
-
         for (PolyLine p : segments) {
             int[] xs = p.xs();
             int[] ys = p.ys();
@@ -254,11 +251,6 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
 
             model.undo();
         }
-
-        // TODO 3A: Implement this method as specified.
-        //  The MouseListener [1] and MouseMotionListener [2] tutorials may be helpful.
-        //  [1] https://docs.oracle.com/javase/tutorial/uiswing/events/mouselistener.html
-        //  [2] https://docs.oracle.com/javase/tutorial/uiswing/events/mousemotionlistener.html
     }
 
     /**
@@ -291,8 +283,11 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        // TODO 4F: Implement this method as specified.  Recall that the `selectedIndex` field is
-        //  used to remember which control point a user is currently interacting with.
+        updateMouseLocation(e.getPoint());
+        if (e.getButton() == MouseEvent.BUTTON1 && model.state() == SELECTED){
+            selectedIndex = model.closestPoint(mouseLocation,
+                    controlPointRadius*controlPointRadius*2);
+        }
     }
 
     /**

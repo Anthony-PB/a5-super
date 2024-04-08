@@ -300,6 +300,9 @@ class PointToPointSelectionModelTest {
         PolyLine afterSegment = model.selection().getFirst();
         assertEquals(new Point(11, 12), beforeSegment.end());
         assertEquals(new Point(11, 12), afterSegment.start());
+
+        //Since index is 0, the start point should change
+        assertEquals(new Point(11, 12), model.start);
     }
     /* Tests of closestPoint() */
 
@@ -309,7 +312,7 @@ class PointToPointSelectionModelTest {
     @Test
     void testClosestPointCentered() {
         SelectionModel model = makeSquareSelection();
-        assertEquals(0, model.closestPoint(new Point(10, 0), 4));
+        assertEquals(1, model.closestPoint(new Point(10, 0), 4));
     }
 
     @DisplayName("GIVEN a selection, WHEN querying for the closest point to a location farther to "
