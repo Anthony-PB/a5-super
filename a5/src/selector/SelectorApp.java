@@ -139,19 +139,6 @@ public class SelectorApp implements PropertyChangeListener {
      * from constructor, as it initializes button fields.
      */
     private JPanel makeControlPanel() {
-        // TODO 3D: Create and return a panel containing the Cancel, Undo, Reset, and Finish
-        //  buttons (remember that these buttons are fields).  Activating the buttons should call
-        //  `cancelProcessing()`, `undo()`, `reset()`, and `finishSelection()` on the selection
-        //  model, respectively.  You may arrange and style the buttons however you like (so long as
-        //  they are usable); a vertical grid [2] is a good place to start.  See `makeMenuBar()`
-        //  above for inspiration.
-        //  The JPanel tutorial [1] shows how to set a layout manager and add components to a panel.
-        //  You are welcome to add borders, labels, and subpanels to improve its appearance.
-        //  The Visual Guide to Layout Managers [3] might give you other ideas for how to arrange
-        //  the buttons.
-        //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/panel.html
-        //  [2] https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
-        //  [3] https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html
         JPanel jPan = new JPanel(new GridLayout(0,2));
         cancelButton = new JButton("Cancel");
         undoButton = new JButton("Undo");
@@ -224,13 +211,6 @@ public class SelectorApp implements PropertyChangeListener {
                 // Nothing to enable for NO_SELECTION state
                 break;
         }
-        // TODO 3F: Enable/disable components (both buttons and menu items) as follows:
-        //  * Cancel is only allowed when the selection is processing
-        //  * Undo and Reset are not allowed when there is no selection (pending or complete)
-        //  * Finish is only allowed when selecting
-        //  * Saving is only allowed when the selection is complete
-        //  The JButton tutorial [1] shows an example of enabling buttons in an event handler.
-        //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/button.html
     }
 
     /**
@@ -346,7 +326,7 @@ public class SelectorApp implements PropertyChangeListener {
         //    re-show the save dialog.  By reusing the same chooser, the dialog will show the same
         //    directory as before the problem. (1 point)
         int returnVal = chooser.showSaveDialog(frame); // Use showSaveDialog for saving a file
-
+        //File Output Stream
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             if (!file.getName().toLowerCase().endsWith(".png")) {
@@ -354,7 +334,7 @@ public class SelectorApp implements PropertyChangeListener {
                 // Embellishment (1)
                 file = new File(file.getAbsolutePath() + ".png");
             }
-
+            
             if (file.exists()) {
                 // Prompt before overwriting existing file
                 // Embellishment (2)
@@ -367,19 +347,22 @@ public class SelectorApp implements PropertyChangeListener {
                     return; // User chose not to overwrite or canceled
                 }
             }
+
             // This is to select the correct pixel via the completed selection in the model
-            Polygon clip = PolyLine.makePolygon(model.selection);
-            Rectangle bounds = clip.getBounds();
-            clip.translate(-bounds.x, -bounds.y);
-            BufferedImage dst = new BufferedImage(bounds.width, bounds.height,
-                    BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = dst.createGraphics();
-            g.setClip(clip);
-            g.drawImage(model.img, -bounds.x, -bounds.y, null);
-            g.dispose(); // Dispose graphics resources
+            //Polygon clip = PolyLine.makePolygon(model.selection);
+            //Rectangle bounds = clip.getBounds();
+            //clip.translate(-bounds.x, -bounds.y);
+            //BufferedImage dst = new BufferedImage(bounds.width, bounds.height,
+            //        BufferedImage.TYPE_INT_ARGB);
+            //Graphics2D g = dst.createGraphics();
+            //g.setClip(clip);
+            //g.drawImage(model.img, -bounds.x, -bounds.y, null);
+            //g.dispose(); // Dispose graphics resources
 
             try {
-                ImageIO.write(dst, "png", file);
+                //ImageIO.write(dst, "png", file);
+                FileOutputStream fileOut = new FileOutputStream(file);
+                model.saveSelection(fileOut);
                 JOptionPane.showMessageDialog(frame,
                         "Image saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
@@ -403,7 +386,6 @@ public class SelectorApp implements PropertyChangeListener {
             } catch (Exception ignored) {
                 /* If the Nimbus theme isn't available, just use the platform default. */
             }
-
             // Create and start the app
             SelectorApp app = new SelectorApp();
             app.start();

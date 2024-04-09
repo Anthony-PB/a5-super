@@ -179,10 +179,6 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
         for(PolyLine p : segments) {
             g.drawPolyline(p.xs(),p.ys(),p.size());
         }
-        // TODO 3B: Implement this method as specified.
-        //  The Graphics API documentation [1] is essential to finding appropriate methods to draw
-        //  the segments and control their color.
-        //  [1] https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Graphics.html
     }
 
     /**
@@ -206,10 +202,10 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
             int[] xs = p.xs();
             int[] ys = p.ys();
 
-            int centerX = (xs[0] + xs[1]) / 2;
-            int centerY = (ys[0] + ys[1]) / 2;
 
-            g.fillOval(centerX - controlPointRadius, centerY - controlPointRadius,
+            g.fillOval(xs[0]-controlPointRadius, ys[0] - controlPointRadius,
+                    2 * controlPointRadius, 2 * controlPointRadius);
+            g.fillOval(xs[1]-controlPointRadius, ys[1] - controlPointRadius,
                     2 * controlPointRadius, 2 * controlPointRadius);
         }
     }
@@ -233,8 +229,8 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
         int[] ys2;
 
         if (selectedIndex == 0) {
-            xs1 = segments.get(segments.size() - 1).xs();
-            ys1 = segments.get(segments.size() - 1).ys();
+            xs1 = segments.getLast().xs();
+            ys1 = segments.getLast().ys();
             xs2 = segments.get(selectedIndex).xs();
             ys2 = segments.get(selectedIndex).ys();
         } else if (selectedIndex == segments.size() - 1) {
@@ -249,20 +245,15 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
             ys2 = segments.get(selectedIndex).ys();
         }
 
-        int centerX1 = (xs1[0] + xs1[1]) / 2;
-        int centerY1 = (ys1[0] + ys1[1]) / 2;
-        int centerX2 = (xs2[0] + xs2[1]) / 2;
-        int centerY2 = (ys2[0] + ys2[1]) / 2;
-
         int[] x1 = new int[2];
         int[] y1 = new int[2];
         x1[1] = mouseLocation.x;
         y1[1] = mouseLocation.y;
-        x1[0] = centerX1;
-        y1[0] = centerY1;
+        x1[0] = xs1[0];
+        y1[0] = ys1[0];
         g.drawPolyline(x1, y1, 2);
-        x1[0] = centerX2;
-        y1[0] = centerY2;
+        x1[0] = xs2[1];
+        y1[0] = ys2[1];
         g.drawPolyline(x1, y1, 2);
     }
 

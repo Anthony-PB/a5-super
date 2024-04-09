@@ -239,6 +239,26 @@ class PointToPointSelectionModelTest {
         return model;
     }
 
+    /**
+     * Return a selection model with possible duplicate points in the SELECTED state.
+     * The selection path consists of multiple straight-line segments connecting the points.
+     * The path starts and ends at (0,0), and may include duplicate points.
+     *
+     * @return A selection model with duplicate points in the selection path.
+     */
+    private SelectionModel makeSelectionWithDuplicates() {
+
+        PointToPointSelectionModel model = new PointToPointSelectionModel(false);
+        model.addPoint(new Point(0, 0));
+        model.addPoint(new Point(10, 0));
+        model.addPoint(new Point(20, 20)); // Duplicate point
+        model.addPoint(new Point(0, 10));
+        model.addPoint(new Point(10, 10));
+        model.addPoint(new Point(20, 20)); // Duplicate point
+        model.finishSelection();
+        return model;
+    }
+
     @DisplayName("GIVEN a selection, WHEN an undo is requested, THEN it will transition to the "
             + "SELECTING state, notifying listeners that its 'state' property has changed, AND its "
             + "selection path will have one fewer segment, ending at its previous penultimate "
@@ -283,8 +303,6 @@ class PointToPointSelectionModelTest {
         assertEquals(new Point(11, 12), afterSegment.start());
     }
 
-    // TODO 4C: Write at least one additional test case for `movePoint()` that moves the starting
-    //  point of the selection.
     @DisplayName("GIVEN a selection, WHEN a point is at the start of the selection path is moved, "
             + "THEN the two segments joined at that point will have their start or end moved to "
             + "the new location as appropriate.")
@@ -323,9 +341,20 @@ class PointToPointSelectionModelTest {
         assertEquals(-1, model.closestPoint(new Point(100, -100), 9));
     }
 
-    // TODO 4E: Write at least one additional test case for `closestPoint()` where the queried
-    //  location is within the maximum distance of an unambiguously closest point but not directly
-    //  on top of it.
+    @DisplayName("GIVEN a selection with duplicate control points, WHEN querying for the closest point "
+            + "to a location equal to one of the duplicate control points, THEN the index of one of "
+            + "those control points will be returned.")
+    @Test
+    void testClosestPointDuplicatePoints() {
+        // Set up the test scenario
+        SelectionModel model = makeSelectionWithDuplicates();
+
+        // Perform the test action
+        int closestPointIndex = model.closestPoint(new Point(20, 20), 4);
+
+        // Verify the result
+        assertEquals(2, closestPointIndex);
+    }
 }
 
 /**

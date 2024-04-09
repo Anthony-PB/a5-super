@@ -269,11 +269,6 @@ public abstract class SelectionModel {
                 closestDistanceSq = distanceSq;
             }
         }
-        // TODO 3H: Implement as specified.  Note that the argument is the _square_ of the maximum
-        //  distance; you can take advantage of this to avoid doing any floating-point math.
-        //  Test immediately with the provided `testClosestPoint*()` cases, and add additional tests
-        //  per the corresponding task in the test suite (consider writing the tests first).
-        //  Note that, by this indexing convention, the index of `start` is 0.
         return closestIndex;
     }
 
@@ -348,12 +343,6 @@ public abstract class SelectionModel {
             // Reset to remove the starting point
             reset();
         } else {
-            // TODO 2E: Remove the last segment of the current selection path.  If the selection was
-            //  finished, transition to the SELECTING state.  Notify listeners that the "selection"
-            //  property has changed (old value should be null, while new value should be provided
-            //  by the `selection()` observer to minimize rep exposure).
-            //  Test immediately with `testUndoSelected()`, and add additional tests per the
-            //  corresponding task in the test suite (consider writing the tests first).
             selection.removeLast();
             if(state == SELECTED){
                 setState(SelectionState.SELECTING);
