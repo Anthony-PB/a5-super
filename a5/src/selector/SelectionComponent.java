@@ -44,9 +44,6 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
     private Point mouseLocation = new Point();
 
     /* View parameters */
-    // TODO (embellishment): Customize these to your liking.  The API documentation for Color [1]
-    //  should be helpful. (0 points - just for fun)
-    //  [1] https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Color.html
 
     /**
      * The radius of a control point, in pixels.  Used both for rendering and for tolerance when
@@ -216,7 +213,6 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
      * [0..segments.size()).
      */
     private void paintMoveGuides(Graphics g, List<PolyLine> segments) {
-        System.out.println(selectedIndex);
         if (selectedIndex < 0 || selectedIndex >= segments.size()) {
             // Handle out-of-bounds selectedIndex, such as throwing an exception or returning early
             return;
@@ -278,6 +274,7 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
             model.addPoint(mouseLocation);
         }
         if(e.getButton() == MouseEvent.BUTTON2 && model.state() == SELECTING){
+            model.finishSelection();
             model.setState(SELECTED);
         }
         if(e.getButton() == MouseEvent.BUTTON3 && (model.state() == SELECTING ||

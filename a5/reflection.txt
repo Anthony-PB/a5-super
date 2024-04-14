@@ -2,10 +2,10 @@
 
 ## Submitter metadata
 
-Partner 1: Firstname Lastname (NetID)  - TODO
-Partner 2: Firstname Lastname (NetID)  - delete if working solo
+Partner 1: Firstname Lastname (NetID)  - Anthony Paredes-Bautista ap2357
+Partner 2: Firstname Lastname (NetID)  - Nathan Varghese nsv23
 
-Hours spent working on this assignment: 0.0  - TODO
+Hours spent working on this assignment: 14
 
 ## Verification questions
 
@@ -14,22 +14,29 @@ Hours spent working on this assignment: 0.0  - TODO
    shown in your error dialog?  (note: answers will vary depending on your
    operating system).
 
-   Answer: TODO
+   Answer: Error saving file: fileNotFoundException: C:\Program Files\Banana.png (Access is denied)
 
 ## Reflection questions
 
 1. Which of the Swing tutorial pages did you find the most interesting and/or
    helpful while implementing your graphical application?
 
-   Answer: TODO
+   Answer: I would say the one involving the drawing on g (Graphics). It was also generally pretty
+   cool.
 
 2. Are you aware of any areas where your submission is not working as intended?
    If so, describe the issue and what you did to try to diagnose it.  Otherwise,
    describe how you verified that your submission fulfilled its requirements.
 
-   Answer: TODO
+   Answer: Well something I am aware of is the inability to save in Gallery. I searched the issue
+   up, and I think I am just not supposed to write in there as the gallery displays images and not
+   just files. I tested the program by trying all the features and making sure that changes
+   were reflected in my files. I also messed around with the undo and adding and finishing the
+   selection.
 
 3. Did you embellish your program in any way?  If so, describe your changes /
    improvements.
 
-   Answer: TODO
+   Answer: Well I added the keyboard shortcuts to open, undo, save, close, and exit. I also made it
+   so that the save menu opens back up after not overwriting a file. I also made it, so it adds the
+   .png as needed.

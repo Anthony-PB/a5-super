@@ -106,7 +106,6 @@ public abstract class SelectionModel {
     protected SelectionModel(SelectionModel copy) {
         state = copy.state;
         // If the copy is currently processing, assume the previous state was SELECTING
-        //  (FIXME: this assumption is invalid if it was processing a move).
         if (state == PROCESSING && copy.getProcessingProgress() == null) {
             state = SELECTING;
         }
@@ -262,7 +261,6 @@ public abstract class SelectionModel {
             int dy = compareP.y - p.y;
             //This is allowed because maxDistance is squared
             int distanceSq = (dx * dx) + (dy * dy);
-            System.out.println(distanceSq);
             //If it is in bounds and smaller than our current distance. swap values of variables
             if (distanceSq <= maxDistanceSq && distanceSq < closestDistanceSq) {
                 closestIndex = i;
@@ -343,11 +341,11 @@ public abstract class SelectionModel {
             // Reset to remove the starting point
             reset();
         } else {
-            selection.removeLast();
-            if(state == SELECTED){
+            if(state == SELECTED) {
                 setState(SelectionState.SELECTING);
-                propSupport.firePropertyChange("selection", null, selection());
             }
+            selection.removeLast();
+            propSupport.firePropertyChange("selection", null, selection());
         }
     }
 

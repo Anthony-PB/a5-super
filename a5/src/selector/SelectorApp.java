@@ -311,20 +311,6 @@ public class SelectorApp implements PropertyChangeListener {
         chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         // We always save in PNG format, so only show existing PNG files
         chooser.setFileFilter(new FileNameExtensionFilter("PNG images", "png"));
-
-        // TODO 3G: Complete this method as specified by performing the following tasks:
-        //  * Show a "save file" dialog using the above chooser [1].
-        //  * If the user selects a file, write an image containing the selected pixels to the file.
-        //  * If a problem occurs when opening or writing to the file, show an error dialog with the
-        //    class of the exception as its title and the exception's message as its text [2].
-        //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
-        //  [2] https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
-        // TODO (embellishment):
-        //  * If the selected filename does not end in ".png", append that extension. (1 point)
-        //  * Prompt with a yes/no/cancel dialog before overwriting a file. (1 point)
-        //  * After an IOException, or after user selects "No" (instead of "Cancel") when prompted,
-        //    re-show the save dialog.  By reusing the same chooser, the dialog will show the same
-        //    directory as before the problem. (1 point)
         int returnVal = chooser.showSaveDialog(frame); // Use showSaveDialog for saving a file
         //File Output Stream
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -334,7 +320,7 @@ public class SelectorApp implements PropertyChangeListener {
                 // Embellishment (1)
                 file = new File(file.getAbsolutePath() + ".png");
             }
-            
+
             if (file.exists()) {
                 // Prompt before overwriting existing file
                 // Embellishment (2)
@@ -347,17 +333,6 @@ public class SelectorApp implements PropertyChangeListener {
                     return; // User chose not to overwrite or canceled
                 }
             }
-
-            // This is to select the correct pixel via the completed selection in the model
-            //Polygon clip = PolyLine.makePolygon(model.selection);
-            //Rectangle bounds = clip.getBounds();
-            //clip.translate(-bounds.x, -bounds.y);
-            //BufferedImage dst = new BufferedImage(bounds.width, bounds.height,
-            //        BufferedImage.TYPE_INT_ARGB);
-            //Graphics2D g = dst.createGraphics();
-            //g.setClip(clip);
-            //g.drawImage(model.img, -bounds.x, -bounds.y, null);
-            //g.dispose(); // Dispose graphics resources
 
             try {
                 //ImageIO.write(dst, "png", file);
