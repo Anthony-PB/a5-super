@@ -183,10 +183,10 @@ class PointToPointSelectionModelTest {
         model.undo();
 
         // Verify the consequences
-        observer.assertNoChanges();
+        observer.assertNotChanged("state");
         assertEquals(SELECTING, model.state());
 
-        observer.assertNotChanged("selection");
+        observer.assertChanged("selection");
         assertEquals(2, model.selection().size());
         assertEquals(new Point(5, 10), model.lastPoint());
     }
