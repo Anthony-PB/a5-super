@@ -355,6 +355,13 @@ class PointToPointSelectionModelTest {
         // Verify the result
         assertEquals(2, closestPointIndex);
     }
+    @DisplayName("GIVEN a selection, WHEN querying for the closest point to a location within the max distance "
+            + "but not equal to any control point, THEN the index of the nearest control point will be returned.")
+    @Test
+    void testClosestPointWithinThreshold() {
+        SelectionModel model = makeSquareSelection();
+        assertEquals(1, model.closestPoint(new Point(8, 0), 4));
+    }
 }
 
 /**

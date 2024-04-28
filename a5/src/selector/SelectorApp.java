@@ -342,8 +342,8 @@ public class SelectorApp implements PropertyChangeListener {
                         "Image saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(frame,
-                        "Error saving file: " + e.getClass().getSimpleName() + ": " + e.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                        e.getMessage(),
+                        e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
                 // (3)
                 saveSelection();
             }

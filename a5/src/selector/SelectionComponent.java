@@ -195,15 +195,20 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
      */
     private void paintControlPoints(Graphics g, List<PolyLine> segments) {
         g.setColor(controlPointColor);
+        Point lastPoint = null; // Track the last point drawn
         for (PolyLine p : segments) {
             int[] xs = p.xs();
             int[] ys = p.ys();
 
-
-            g.fillOval(xs[0]-controlPointRadius, ys[0] - controlPointRadius,
-                    2 * controlPointRadius, 2 * controlPointRadius);
-            g.fillOval(xs[1]-controlPointRadius, ys[1] - controlPointRadius,
-                    2 * controlPointRadius, 2 * controlPointRadius);
+            for (int i = 0; i < xs.length; i++) {
+                Point currentPoint = new Point(xs[i], ys[i]);
+                // Only draw if this point is not the same as the last point drawn
+                if (!currentPoint.equals(lastPoint)) {
+                    g.fillOval(xs[i] - controlPointRadius, ys[i] - controlPointRadius,
+                            2 * controlPointRadius, 2 * controlPointRadius);
+                }
+                lastPoint = currentPoint; // Update the last point drawn
+            }
         }
     }
 
